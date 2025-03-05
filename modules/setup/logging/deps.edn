@@ -1,0 +1,22 @@
+{:deps  {org.clojure/clojure                     {:mvn/version "1.12.0"}
+
+         ;; Logging
+         com.taoensso/timbre                     {:mvn/version "6.6.1"}
+         viesti/timbre-json-appender             {:mvn/version "0.2.14"}
+
+         ;;; Logging done right (i.e., using only timbre (maybe via sl4fj))
+         org.clojure/tools.logging               {:mvn/version "1.3.0"}
+         com.fzakaria/slf4j-timbre               {:mvn/version "0.4.1"}
+         org.slf4j/log4j-over-slf4j              {:mvn/version "2.0.17"}
+         org.slf4j/jul-to-slf4j                  {:mvn/version "2.0.17"}
+         org.slf4j/jcl-over-slf4j                {:mvn/version "2.0.17"}
+         org.apache.logging.log4j/log4j-to-slf4j {:mvn/version "2.24.3"} ;; route log4j2 via slf4j
+
+         }
+ :paths ["src" "resources"]
+ :aliases
+ {:dev {:extra-deps  {integrant/repl                         {:mvn/version "0.4.0"}
+                      aero/aero                              {:mvn/version "1.1.6"}
+                      gorillalabs.bauhaus.dev-tooling/config {:local/root "../../dev-tooling/config"}}
+        :extra-paths ["dev" "dev-resources"
+                      "test"]}}}

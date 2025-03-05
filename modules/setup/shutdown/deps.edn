@@ -1,0 +1,9 @@
+{:deps  {org.clojure/clojure {:mvn/version "1.12.0"}
+         com.taoensso/timbre {:mvn/version "6.6.1"}}
+ :paths ["src" "resources"]
+ :aliases
+ {:dev  {:extra-deps  {gorillalabs.bauhaus.dev-tooling/config {:local/root "../../dev-tooling/config"}}
+         :extra-paths ["test"]}
+  :test {:extra-deps  {com.github.seancorfield/expectations {:mvn/version "RELEASE"}}
+         :extra-paths ["test"]}
+  }}
