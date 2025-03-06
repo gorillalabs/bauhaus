@@ -1,0 +1,4 @@
+{:secrets   #include #join [#env HOME "/.gorillalabs/.secrets/entra/identity.edn"]
+ :auth {:authority    #ref [:secrets :authority]
+        :app-id       #ref [:secrets :app-id]
+        :secret-value #ref [:secrets :secret-value]}}
