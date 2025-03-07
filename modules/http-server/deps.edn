@@ -1,0 +1,35 @@
+{:deps  {org.clojure/clojure                                {:mvn/version "1.12.0"}
+
+         buddy/buddy-auth                                   {:mvn/version "3.0.323"}
+         com.github.sikt-no/clj-jwt                         {:mvn/version "0.5.98"}
+
+         http-kit/http-kit                                  {:mvn/version "2.8.0"}
+         metosin/reitit                                     {:mvn/version "0.7.2" :exclusions [metosin/muuntaja]}
+         ring/ring-core                                     {:mvn/version "1.13.0"}
+
+         gorillalabs/muuntaja                               {:mvn/version "0.8.0"}
+         ring/ring-defaults                                 {:mvn/version "0.6.0"}
+         amalloy/ring-gzip-middleware                       {:mvn/version "0.1.4"}
+
+
+         integrant/integrant                                {:mvn/version "0.13.1"}
+         org.gorillalabs.bauhaus.clojure-contrib/collection {:local/root "../clojure-contrib/collection"}
+
+
+         ;; Logging
+         com.taoensso/timbre                                {:mvn/version "6.6.1"}}
+ :paths ["src" "resources"]
+ :aliases
+ {
+  :dev  {:extra-deps  {integrant/repl                             {:mvn/version "0.4.0"}
+                       org.gorillalabs.bauhaus.dev-tooling/config {:local/root "../dev-tooling/config"}
+                       org.gorillalabs.bauhaus.setup/logging      {:local/root "../setup/logging"}
+
+                       ;; Swagger support, see https://github.com/metosin/reitit/blob/master/doc/ring/swagger.md
+                       metosin/reitit-swagger                       {:mvn/version "0.7.2"}
+                       metosin/reitit-swagger-ui                    {:mvn/version "0.7.2"}
+
+                       }
+         :extra-paths ["dev" "dev-resources" "test"]}
+  :test {:extra-deps  {com.github.seancorfield/expectations {:mvn/version "RELEASE"}}
+         :extra-paths ["test"]}}}
