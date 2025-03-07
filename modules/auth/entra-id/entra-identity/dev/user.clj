@@ -3,6 +3,7 @@
     [gorillalabs.bauhaus.setup.logging :as setup.logging]
     [gorillalabs.bauhaus.dev.config :as dev.config]
     [gorillalabs.bauhaus.auth.entra.identity.config :as config]
+    [gorillalabs.bauhaus.auth.entra.identity.authenticate]
     [integrant.repl :refer [clear halt prep init reset reset-all]]))
 
 (setup.logging/init-dev-logging)
