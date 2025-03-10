@@ -36,4 +36,4 @@
                  :stopping (nil? stop)
                  :status (httpkit/server-status server))
       ;; return from ig/halt-key! only if server is stopped (or timeout is reached)!
-      (log/info "Stop" :cause (deref stop timeout :promise-timed-out)))))
+      (log/info "Stop"))))

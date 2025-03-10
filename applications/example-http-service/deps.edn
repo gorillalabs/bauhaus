@@ -1,0 +1,37 @@
+{:deps  {org.clojure/clojure                                {:mvn/version "1.12.0"}
+
+         org.gorillalabs.bauhaus.setup/logging              {:local/root "../../modules/setup/logging"}
+         org.gorillalabs.bauhaus.setup/shutdown             {:local/root "../../modules/setup/shutdown"}
+         org.gorillalabs.bauhaus.setup/cli                  {:local/root "../../modules/setup/cli"}
+         org.gorillalabs.bauhaus.clojure-contrib/collection {:local/root "../../modules/clojure-contrib/collection"}
+
+         org.gorillalabs.bauhaus.http-server/server         {:local/root "../../modules/http-server"}
+
+         integrant/integrant                                {:mvn/version "0.13.1"}
+         aero/aero                                          {:mvn/version "1.1.6"}
+         }
+ :paths ["src" "resources"]
+ :aliases
+ {:start     {:exec-fn example-http.app/-main}
+  :dev       {:extra-deps  {integrant/repl                             {:mvn/version "0.4.0"}
+                            org.gorillalabs.bauhaus.dev-tooling/config {:local/root "../../modules/dev-tooling/config"}}
+              :extra-paths ["dev" "dev-resources"]}
+  :test      {:extra-paths ["test" "test-resources"]
+              :extra-deps  {org.clojure/test.check               {:mvn/version "1.1.1"}
+                            io.github.cognitect-labs/test-runner {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+              :exec-fn     cognitect.test-runner.api/test}
+  :build-dev {:extra-deps  {org.gorillalabs.bauhaus.dev-tooling/build {:local/root "../../modules/dev-tooling/build"}
+                            org.gorillalabs.bauhaus.setup/logging     {:local/root "../../modules/setup/logging"}
+                            io.github.seancorfield/build-clj          {:git/tag "v0.9.2" :git/sha "9c9f078602effe4df2b7b505003596ea1c5de436" :exclusions [org.slf4j/slf4j-nop]}
+                            }
+              :extra-paths ["build"]}
+  :build     {:deps       {org.gorillalabs.bauhaus.dev-tooling/build {:local/root "../../modules/dev-tooling/build"}
+                           org.gorillalabs.bauhaus.setup/logging     {:local/root "../../modules/setup/logging"}
+                           io.github.seancorfield/build-clj          {:git/tag "v0.9.2" :git/sha "9c9f078602effe4df2b7b505003596ea1c5de436" :exclusions [org.slf4j/slf4j-nop]}
+                           }
+              :paths      ["build"]
+              :ns-default build}
+  :install   {:extra-deps {slipset/deps-deploy {:mvn/version "RELEASE"}}
+              :exec-fn    deps-deploy.deps-deploy/deploy
+              :exec-args  {:installer :local
+                           :artifact  "app.jar"}}}}
