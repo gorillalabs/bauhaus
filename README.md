@@ -11,7 +11,10 @@ but can be used without it.
 It is the distillation of the experience of running Clojure services in production in several different organizations.
 
 ## Usage
-There is an example application showing usage in [applications/example](applications/example).
+There is an example application showing usage in [applications/example](applications/example) and an example http
+service showing more elaborate usage in [application/example-http-service](applications/example-http-service).
+
+See [Documentation: Intro](docs/intro.md) for a more detailed introduction utilizing the two example applications.
 
 And while we keep bauhaus in a monorepo, this does not mean that you have to follow our path here.
 You can use the modules independently, even within your git-based deps.edn dependencies.

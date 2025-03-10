@@ -3,7 +3,7 @@
             [gorillalabs.bauhaus.setup.exit]
             [gorillalabs.bauhaus.setup.logging :as setup.logging]
             [integrant.repl :refer [clear halt prep init reset reset-all]]
-            [system.local]
+            [dev.system]
             [taoensso.timbre :as log]))
 
 (setup.logging/init-dev-logging
@@ -16,9 +16,7 @@
 
 
 (integrant.repl/set-prep!
-  (case #_:aws :local
-    #_#_:aws system.aws/aws-dev-system
-    :local system.local/local-dev-system))
+  dev.system/dev-system)
 
 ;-----------------------------------------------------------------------
 ; Use

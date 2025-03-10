@@ -13,7 +13,9 @@
  {:start     {:exec-fn example.app/-main}
   :dev       {:extra-deps  {integrant/repl                         {:mvn/version "0.4.0"}
                             org.gorillalabs.bauhaus.dev-tooling/config {:local/root "../../modules/dev-tooling/config"}}
-              :extra-paths ["dev" "dev-resources"]}
+              :extra-paths ["dev" "dev-resources"]
+              :jvm-opts ["-Dclojure.tools.logging.factory=clojure.tools.logging.impl/slf4j-factory"]
+              }
   :test      {:extra-paths ["test" "test-resources"]
               :extra-deps  {org.clojure/test.check               {:mvn/version "1.1.1"}
                             io.github.cognitect-labs/test-runner {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
