@@ -17,6 +17,6 @@
  :aliases
  {:dev {:extra-deps  {integrant/repl                         {:mvn/version "0.4.0"}
                       aero/aero                              {:mvn/version "1.1.6"}
-                      gorillalabs.bauhaus.dev-tooling/config {:local/root "../../dev-tooling/config"}}
+                      org.gorillalabs.bauhaus.dev-tooling/config {:local/root "../../dev-tooling/config"}}
         :extra-paths ["dev" "dev-resources"
                       "test"]}}}

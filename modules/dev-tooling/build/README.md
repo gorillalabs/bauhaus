@@ -8,7 +8,7 @@ Add this project to your deps.edn (typcially in a `:build` alias).
 Currently, this is possible from the local repository structure using
 
 ```clojure
-:build     {:deps       {gorillalabs.bauhaus.dev-tooling/build {:local/root "../../modules/dev-tooling/build"}
+:build     {:deps       {org.gorillalabs.bauhaus.dev-tooling/build {:local/root "../../modules/dev-tooling/build"}
             ...
             }
 ```
@@ -17,7 +17,7 @@ or from the git repository using
 
 ```clojure
 {       ...
- gorillalabs.bauhaus.dev-tooling/build {:git/url   "git@github.com:gorillalabs/bauhaus.git"
+ org.gorillalabs.bauhaus.dev-tooling/build {:git/url   "git@github.com:gorillalabs/bauhaus.git"
                                         :git/sha   "AE...<commit sha>"
                                         :deps/root "modules/dev-tooling/build"}
  ...}

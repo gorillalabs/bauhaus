@@ -1,9 +1,10 @@
 (ns user
   (:require [gorillalabs.bauhaus.dev.config :as dev.config]
+            [example-http.dev.system :as dev.system]
             [gorillalabs.bauhaus.setup.exit]
             [gorillalabs.bauhaus.setup.logging :as setup.logging]
             [integrant.repl :refer [clear halt prep init reset reset-all]]
-            [dev.system]
+            [example-http.dev.system :as dev.system]
             [taoensso.timbre :as log]))
 
 (setup.logging/init-dev-logging
