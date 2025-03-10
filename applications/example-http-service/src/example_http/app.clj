@@ -44,17 +44,16 @@
       (setup.shutdown/add-hook! :clojure.core/shutdown-agents setup.shutdown/agents)
       (setup.shutdown/hook-order! [:clojure.core/shutdown-agents])
 
-
       (when (config/repl-port config)
         (let [socket (clojure.core.server/start-server {:port   (config/repl-port config)
                                                         :name   "socket-repl"
                                                         :accept 'clojure.core.server/repl})]
           (log/info "Started REPL socket server" {:socket socket})))
-
+      (log/info "Starting system")
       (def system (ig/init (system/system-config config)))
       (setup.shutdown/add-hook! :app/shutdown-system shutdown)
       (setup.shutdown/hook-order! [:app/shutdown-system :clojure.core/shutdown-agents])
-      (log/debug "System started"))
+      (log/info "System started"))
     (catch Throwable t
       (log/error t "Unable to initiate system" {:status :error})
       (exit/exit -1))))

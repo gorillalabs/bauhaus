@@ -5,8 +5,8 @@
 To run the example app, use the following command:
 
 ```bash
-cd applications/example
-clj -J-Dclojure.tools.logging.factory=clojure.tools.logging.impl/slf4j-factory -M -m example.app -c resources/config.edn
+$ cd applications/example
+$ clj -J-Dclojure.tools.logging.factory=clojure.tools.logging.impl/slf4j-factory -M -m example.app -c resources/config.edn
 ```
 
 This will start the example app as defined by the Integrant system map in [`example.app.system` namespace](../applications/example/src/example/app/system.clj)
@@ -16,7 +16,7 @@ the module [setup/CLI](../modules/setup/CLI/)).
 The sample app will log to a file `app.log` in a sibling directory of example named `example.logs`.
 
 ```bash
-$ cat ../example.logs/app.log                                                                                                                                           system
+$ cat ../example.logs/app.log
 {"ns":"example.app.system","file":"example/app/system.clj","msg":"Hello","hostname":"<hostname>","level":"error","line":7,"thread":"main","timestamp":"2025-03-10T15:49:27Z","to":"World"}
 {"msg":"Shutting down system...","timestamp":"2025-03-10T15:49:27Z","level":"warn","thread":"Thread-1","file":"example/app.clj","line":32,"ns":"example.app","hostname":"<hostname>"}
 {"msg":"System shut down.","timestamp":"2025-03-10T15:49:27Z","level":"warn","thread":"Thread-1","file":"example/app.clj","line":34,"ns":"example.app","hostname":"<hostname>"}
@@ -64,8 +64,8 @@ Fire up a REPL for the [example application](../applications/example) to follow 
 `dev` alias. Use your favorite toolset for this (mine is [Cursive](https://cursive-ide.com/)), or just use the CLI:
 
 ```bash
-cd applications/example
-clj -A:dev
+$ cd applications/example
+$ clj -A:dev
 ```
 
 Bauhaus projects (as the example project) are Integrant-based. The example project has extensive
@@ -98,5 +98,71 @@ Now: Feel free to hack away!
 
 ## A sample http service
 
-...
+A second example uses a simple http service. You can start the application similar to how you started the simple example app:
 
+```bash
+$ cd applications/example-http-service
+$ clj -J-Dclojure.tools.logging.factory=clojure.tools.logging.impl/slf4j-factory -M -m example-http.app -c resources/config.edn
+```
+
+The log file will tell you when the system is started:
+
+```text
+$ tail ../example-http-service.logs/app.log
+...
+{"msg":"System started","timestamp":"2025-03-10T16:28:22Z","level":"info","thread":"main","file":"example_http/app.clj","line":56,"ns":"example-http.app","hostname":"<hostname>"}
+```
+
+You can then test the application using cURL:
+```bash
+$ curl -vv -H "Accept: application/json" -H "accept-charset: iso-8859-1" http://localhost:8080/bar/
+* Host localhost:8080 was resolved.
+...
+< HTTP/1.1 200 OK
+< Content-Type: application/json; charset=iso-8859-1
+< content-length: 40
+< Server: http-kit
+{"msg":"Hello World ?","status":"green"}
+```
+
+As with the simple example, the Integrant system is set up in the [`example-http/system`]
+(../applications/example-http-service/src/example_http/system.clj) namespace:
+
+It uses the `:gorillalabs.bauhaus.http/server` component provided by the `[http-server](../modules/http-server) module
+as well as the `:gorillalabs.bauhaus.http-server/auth-backend`, also provided by http-server module.
+
+The example app itself defines two components: `:gorillalabs.bauhaus.http-example/api` and
+`:gorillalabs.bauhaus.http-example/core`, showcasing the separation of a functional core and an http API as a port in a
+hexagonal architecture.
+
+
+The example http app provides routes where the caller needs to authenticate using Entra ID. Bauhaus provides a module to
+setup Entra ID authentication and acquire a token, see the [auth/entra-id/entra-identity](../modules/auth/entra-id/entra-identity)
+module. However, we will not discuss in detail here in the Intro.
+
+## Develop the example http service in the REPL
+
+We configured a different http port for the dev configuration in the [`dev-resources/dev-config.edn`](../applications/example-http-service/dev-resources/dev-config.edn) file, so we can
+run the application in the REPL parallel to a running application.
+
+Start a REPL (as described above) and run `(go)` in the user namespace. This will start the application with the dev configuration:
+
+```bash
+$ cd applications/example-http-service
+$ clj -A:dev
+```
+
+You can then test the REPL based application using cURL as described above, but with a different port:
+
+```bash
+$ curl -vv -H "Accept: application/json" -H "accept-charset: iso-8859-1" http://localhost:8000/bar/
+{"msg":"Hello Developer ????","status":"purple"}
+```
+
+Notice the different message. That's because the dev system map set up a different functional core in the [`example-http.dev.system/dev-system`]
+(../applications/example-http-service/dev/example_http/dev/system.clj) function.
+
+Feel free to change that message by altering the function returned by the `ig/init-key :http-example.dev/core` method in the
+[example-http.dev.core](../applications/example-http-service/dev/example_http/dev/core.clj) namespace and reload the system by evaluating `(reset)` in the user namespace.
+
+Again: Feel free to hack away and have fun!
