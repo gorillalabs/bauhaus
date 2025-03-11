@@ -4,6 +4,8 @@ Bauhaus is an opinionated set of foundational modules to optimize DevOps experie
 
 ## Overall design
 
+We explain our goals and design choices in the [Design Choices](docs/design-choices.md) document.
+
 Bauhaus is a set of modules that are designed to be used together.
 The modules are designed to be used with [Integrant](https://github.com/weavejester/integrant),
 but can be used without it.
