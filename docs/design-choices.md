@@ -1,8 +1,31 @@
 # Goals
 
 I think it is important to understand why Bauhaus was designed and built the way it was.
+
 This document will outline the goals of Bauhaus (in the first section) and how they were achieved
 (in the [Design choices](#design-choices) section).
+
+## Fit for scalable teams and evolving team topologies
+
+When you are in a position to choose Bauhaus over any other approach, you're likely in a small team
+with the goal to grow or re-architecting a bigger application. Either way, it is important that
+your overall architecture and tooling landscape is evolvable. You need to move fast as a solo developer or a small team,
+and you need to cycle fast on small, decoupled entities.
+
+Bauhaus is using a monorepo approach to bundle everything you need and to give you
+a head start. Just fork Bauhaus and start adding your stuff in your own repo. Or build your own application and depend
+it on Bauhaus. Both ways are fine.
+
+If you follow our approach, fork Bauhaus and start building your own environment on that basis,
+you'll learn to love Deps' ability to point to local dependencies as well as git based
+dependencies. If you develop modules in rather independent teams, you do not need to worry about breaking changes.
+You can point your part of the code on the branch provided by the other team to test things before merging, or in case 
+things break. No one needs to slow down.
+
+## Fast development
+Bauhaus is designed to be used in a fast-paced development environment. We believe that nothing can be achieved when
+you're not able to move fast. Don't be hasty or skip the design phase in your iterative cycles, but once you start coding,
+we want to accelerate your development, not stand in your way.
 
 ## Versatile (in terms of runtime environments)
 

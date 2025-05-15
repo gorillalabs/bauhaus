@@ -1,10 +1,8 @@
 # Bauhaus
 
-Bauhaus is an opinionated set of foundational modules to optimize DevOps experience with Clojure-based services.
+Bauhaus is an [opinionated](docs/design-choices.md) set of foundational modules to optimize DevOps experience with Clojure-based services.
 
 ## Overall design
-
-We explain our goals and design choices in the [Design Choices](docs/design-choices.md) document.
 
 Bauhaus is a set of modules that are designed to be used together.
 The modules are designed to be used with [Integrant](https://github.com/weavejester/integrant),
