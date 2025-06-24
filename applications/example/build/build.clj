@@ -12,9 +12,10 @@
 
 (def build-conf
   (let [target-name 'gorillalabs.bauhaus.example/app
-        target "target"]
+        target "target"
+        build (version/application-build-string)]
     {:name      target-name
-     :build     (version/application-build-string)
+     :build     build
      :target    target
      :prep-dir  (str target "/prep")
      :class-dir (str target "/classes")
