@@ -28,6 +28,29 @@ You can use the modules independently, even within your git-based deps.edn depen
         }}
 ```
 
+## Nix Development Environment
+
+This project includes a [Nix flake](https://wiki.nixos.org/wiki/Flakes) to provide a reproducible development environment.
+
+### Prerequisites
+
+You must have Nix installed with flake support enabled. You can find installation instructions on the [official NixOS website](https://nixos.org/download.html).
+
+### Activating the Environment
+
+Navigate to the project's root directory and run the following command:
+
+```sh
+nix develop
+```
+
+This will download all the required dependencies and drop you into a `nushell` with the following tools available:
+
+  * `jdk23`
+  * `clojure`
+  * `git`
+
+Upon activation, it will confirm the Java and Clojure versions available in the shell.
 
 ## Modules
 
