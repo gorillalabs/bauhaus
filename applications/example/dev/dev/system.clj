@@ -9,7 +9,9 @@
     ))
 
 (defmethod ig/init-key :example/hello-de [_ {:keys [who]}]
-  (log/info "Hallo" {:an who}))
+  (log/info "Hallo" {:an who})
+  {:an who}
+  )
 
 (defn dev-config []
   (log/debug "Read dev config")

@@ -1,0 +1,32 @@
+# Use a base image with Java and Leiningen/Clojure CLI
+FROM clojure:tools-deps-1.12.1.1550
+
+WORKDIR /usr/bauhaus
+
+# Copy project files. This will be overwritten by the volume mount during development,
+# but is good for building a standalone image later if needed.
+COPY . .
+
+
+# Install dependencies - important for the initial build to avoid issues
+# during volume mount if you don't have them cached.
+# For Leiningen:
+# RUN lein deps
+# For Clojure CLI:
+
+# WORKDIR /usr/bauhaus/applications/example
+# RUN clj -P -A:nrepl
+# WORKDIR /usr/bauhaus
+
+# WORKDIR /usr/bauhaus/devenv/mcp/clj-mcp/
+# RUN clj -P -A:mcp
+# WORKDIR /usr/bauhaus
+
+
+# expose https sse port
+EXPOSE 7080
+
+# Expose the nREPL port
+EXPOSE 7880
+
+CMD ["/usr/bauhaus/devenv/mcp/clj-mcp/dev-setup.sh"]

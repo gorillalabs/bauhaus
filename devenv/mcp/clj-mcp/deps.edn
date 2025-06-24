@@ -1,0 +1,13 @@
+{:aliases
+ {:mcp
+  {:deps {org.gorillalabs.bauhaus/setup-logging {:local/root "../../../modules/setup/logging"}
+          
+          com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"
+                                   :git/sha "e158d8a67a31ab29f2a31fea86f2e3037ffd593e"}
+          jakarta.servlet/jakarta.servlet-api {:mvn/version "6.1.0"}
+          org.eclipse.jetty/jetty-server      {:mvn/version "11.0.25"}
+          org.eclipse.jetty/jetty-servlet     {:mvn/version "11.0.25"}
+          }
+   :exec-fn clojure-mcp.sse-main/start-sse-mcp-server
+   :exec-args {:mcp-sse-port 7080
+               :port 7880}}}}

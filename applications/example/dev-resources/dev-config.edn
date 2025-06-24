@@ -1,1 +1,3 @@
-{:who #env USER}
+{:who #envf ["who:%s, where:%s"
+             USER
+             PWD]}

@@ -5,3 +5,4 @@
 **/.nrepl-port
 **/*.iml
 **/target/
+.logs
