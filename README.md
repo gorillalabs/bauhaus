@@ -44,29 +44,134 @@ service showing more elaborate usage in [application/example-http-service](appli
 
 See [Documentation: Intro](docs/intro.md) for a more detailed introduction utilizing the two example applications.
 
-And while we keep bauhaus in a monorepo, this does not mean that you have to follow our path here.
-You can use the modules independently, even within your git-based deps.edn dependencies.
+## Monorepo Development (Recommended)
 
-```clojure
-{:deps {...
-        org.gorillalabs.bauhaus/setup-logging {:git/url   "git@github.com:gorillalabs/bauhaus.git"
-                                               :git/sha   "AE...<commit sha>" ;; see https://github.com/gorillalabs/bauhaus/commits/main/
-                                               :deps/root "modules/setup/logging"}
-        ...
-        }}
-```
+At least for starting, going with the monorepo approach is the way to go.
+It becomes more complicated if you do not have 10s of applications, but 100s or 1000s of deployment artefacts,
+but for moving fast within a scoped context, a monorepo approach is favourable.
 
-### Monorepo Development (Recommended)
+Clone the entire repository (or your own fork) for development:
 
-Clone the entire repository for development:
 ```bash
 git clone https://github.com/gorillalabs/bauhaus.git
-cd bauhaus/applications/example
 ```
 
-### Individual Module Dependencies
+### Creating New Projects
 
-For production applications, reference specific modules:
+####  Option 1: Quick Start by Copying an Example
+
+```bash
+# Copy the basic example
+cp -r applications/example applications/my-new-project
+cd applications/my-new-project
+
+# Update project namespace in src/example/ → src/my-project/
+# Update deps.edn and configuration as needed
+```
+
+#### Option 2: Start Fresh
+
+1. **Create project structure:**
+```bash
+mkdir -p applications/my-project && cd applications/my-project
+mkdir -p {src,resources,dev,dev-resources,test}
+```
+
+2. **Create deps.edn:**
+```clojure
+{:paths ["src" "resources"]
+ 
+ :deps {org.clojure/clojure {:mvn/version "1.12.0"}
+        integrant/integrant {:mvn/version "0.13.1"}
+        aero/aero {:mvn/version "1.1.6"}
+        
+        ;; Add Bauhaus modules as needed
+        org.gorillalabs.bauhaus/setup-logging 
+        {:git/url "https://github.com/gorillalabs/bauhaus.git"
+         :git/sha "LATEST_SHA"
+         :deps/root "modules/setup/logging"}}
+         
+ :aliases
+ {:dev {:extra-paths ["dev" "dev-resources"]
+        :extra-deps {integrant/repl {:mvn/version "0.4.0"}
+                     org.gorillalabs.bauhaus/dev-config 
+                     {:git/url "https://github.com/gorillalabs/bauhaus.git"
+                      :git/sha "LATEST_SHA"
+                      :deps/root "modules/dev-tooling/config"}}}
+                      
+  :build {:deps {org.gorillalabs.bauhaus/build 
+                 {:git/url "https://github.com/gorillalabs/bauhaus.git"
+                  :git/sha "LATEST_SHA"  
+                  :deps/root "modules/dev-tooling/build"}}
+          :paths ["build"]
+          :ns-default build}}}
+```
+
+3. **Set up development workflow:**
+```clojure
+;; dev/user.clj
+(ns user
+  (:require [integrant.repl :as ig-repl]
+            [gorillalabs.bauhaus.dev-tooling.config :as dev-config]))
+
+(ig-repl/set-prep! (constantly (dev-config/ig-config "dev-resources/dev-config.edn")))
+
+(def go ig-repl/go)
+(def halt ig-repl/halt)  
+(def reset ig-repl/reset)
+```
+
+4. **Create your system configuration:**
+```clojure
+;; src/my_project/system.clj
+(ns my-project.system
+  (:require [integrant.core :as ig]))
+
+(defn system-config [config]
+  {:my-project/core {:message (:message config)}})
+
+(defmethod ig/init-key :my-project/core [_ config]
+  (println "Starting with:" (:message config))
+  config)
+
+(defmethod ig/halt-key! :my-project/core [_ component]
+  (println "Stopping"))
+```
+
+### Build System Integration
+
+To use Bauhaus build tools in your project:
+
+1. **Add build configuration:**
+```clojure
+;; build/build.clj
+(ns build
+  (:require [gorillalabs.bauhaus.build.version :as version]))
+
+(defn uber [opts]
+  (let [version-string (version/application-build-string)]
+    (println "Building version:" version-string)
+    ;; Your build logic here
+    ))
+```
+
+2. **Use git tags for versioning:**
+```bash
+git tag v1.0.0  # Bauhaus build tools will use this
+clj -T:build uber
+```
+
+### Integration Patterns
+
+**Recommended module combinations:**
+
+- **Basic CLI app**: setup/logging + setup/cli + setup/shutdown
+- **Web service**: + http-server
+- **Development**: + dev-tooling/config + dev-tooling/build
+
+## Individual Module Dependencies
+
+You can, of course, reference specific modules even if you do not use all of Bauhaus or the monorepo structure:
 
 ```clojure
 {:deps {;; Core dependencies
@@ -87,6 +192,7 @@ For production applications, reference specific modules:
 
 > **💡 Tip**: Check [latest commits](https://github.com/gorillalabs/bauhaus/commits/main/) for the most recent SHA
 
+
 ## Modules
 
 ### Setup
@@ -94,35 +200,47 @@ For production applications, reference specific modules:
 
 | Module | Path | Description |
 |--------|------|-------------|
-| [Logging](modules/setup/logging/README.md) | [modules/setup/logging](modules/setup/logging) | setup proper logging infrastructure, fighting the JVM logging chaos. |
-| [Shutdown](modules/setup/shutdown/README.md) | [modules/setup/shutdown](modules/setup/shutdown) | provide ordered shutdown hooks as proposed in [Killing me softly: Graceful shutdowns in Clojure](https://medium.com/helpshift-engineering/achieving-graceful-restarts-of-clojure-services-b3a3b9c1d60d) |
-| [CLI](modules/setup/cli/README.md) | [modules/setup/cli](modules/setup/cli) | setup a CLI for your application. |
-
+| [Logging](modules/setup/logging/README.md) | [modules/setup/logging](modules/setup/logging) | Setup proper logging infrastructure, fighting the JVM logging chaos. |
+| [Shutdown](modules/setup/shutdown/README.md) | [modules/setup/shutdown](modules/setup/shutdown) | Provide ordered shutdown hooks as proposed in [Killing me softly: Graceful shutdowns in Clojure](https://medium.com/helpshift-engineering/achieving-graceful-restarts-of-clojure-services-b3a3b9c1d60d) |
+| [CLI](modules/setup/cli/README.md) | [modules/setup/cli](modules/setup/cli) | Setup a CLI for your application. |
 
 ### Dev-Tooling
 *Enhanced developer experience*
 
-| Module                                         | Path | Description                                                |
-|------------------------------------------------|------|------------------------------------------------------------|
+| Module | Path | Description |
+|--------|------|-------------|
 | [Config](modules/dev-tooling/config/README.md) | [modules/dev-tooling/config](modules/dev-tooling/config) | Handle development config and ease Integrant REPL integration. |
-| [Build](modules/dev-tooling/build/README.md)   | [modules/dev-tooling/build](modules/dev-tooling/build) | Support building your app.                                 |
-
+| [Build](modules/dev-tooling/build/README.md) | [modules/dev-tooling/build](modules/dev-tooling/build) | Support building your app with version management. |
 
 ### Clojure Contrib
 *Enhanced standard library*
 
-| Module                                        | Path | Description                                                |
-|-----------------------------------------------|------|------------------------------------------------------------|
-| [Collection](modules/clojure-contrib/collection/README.md) | [modules/clojure-contrib/collection](modules/clojure-contrib/collection) | Collection utilities. |
+| Module | Path | Description |
+|--------|------|-------------|
+| [Collection](modules/clojure-contrib/collection/README.md) | [modules/clojure-contrib/collection](modules/clojure-contrib/collection) | Collection utilities including deep-merge and more. |
 
 
 ## Learning Path
 
-1. **🚀 Start Here**: [Introduction Guide](docs/intro.md) - Comprehensive walkthrough
-2. **👀 See It Work**: [Basic Example](applications/example) - Simple application
-3. **🌐 Real World**: [HTTP Service Example](applications/example-http-service) - Production patterns
-4. **📚 Deep Dive**: Individual module documentation
-5. **🔧 Customize**: [Design Choices](docs/design-choices.md) - Understanding the philosophy
+### 🚀 New to Bauhaus? Start here:
+
+1. **📖 Read the Philosophy**: [Design Choices](docs/design-choices.md) - Understand the "why"
+2. **⚡ Quick Win**: Run the [Basic Example](applications/example) in 2 minutes
+   ```bash
+   cd applications/example
+   clj -M:dev
+   # In REPL: (go)
+   ```
+3. **🌐 Real Application**: Explore the [HTTP Service Example](applications/example-http-service)
+4. **🔧 Build Your Own**: Follow [Creating New Projects](#creating-new-projects)
+5. **📚 Deep Dive**: [Comprehensive Introduction](docs/intro.md)
+
+### 🎯 By Use Case:
+
+- **Building CLI tools**: Start with setup/logging + setup/cli
+- **Web applications**: Try example-http-service first
+- **Learning Integrant**: Both examples show different patterns
+- **Production deployment**: Check build tooling and shutdown hooks
 
 ## Development Environment
 
@@ -159,6 +277,28 @@ We welcome contributions! Please:
 3. **Follow the established patterns** in existing modules
 4. **Add tests** for new functionality
 5. **Update documentation** as needed
+
+## Troubleshooting
+
+### Common Issues
+
+**"Module not found" errors:**
+- Verify the `:git/sha` points to a valid commit
+- Check that `:deps/root` path matches the actual module location
+- Ensure module dependencies are compatible
+
+**REPL development issues:**
+- Run `(reset)` if code changes aren't reflecting
+- Check that `dev-resources/dev-config.edn` exists
+- Verify Integrant system configuration is valid
+
+**Build problems:**
+- Check that build namespace is properly configured in `:build` alias
+
+**Getting Help:**
+- Check individual module READMEs for specific guidance
+- Review the [Introduction Guide](docs/intro.md) for detailed examples
+- Look at working examples in `applications/` directory
 
 ## Migration from Other Frameworks
 
